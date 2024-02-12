@@ -2,25 +2,25 @@
     <string name="app_name">Calculator</string>
     <string name="place_holder_num">0</string>
     <string-array name="buttons">
-        <item name="btn0">0</item>
-        <item name="btn1">1</item>
-        <item name="btn2">2</item>
-        <item name="btn3">3</item>
-        <item name="btn4">4</item>
-        <item name="btn5">5</item>
-        <item name="btn6">6</item>
         <item name="btn7">7</item>
-        <item name="btn8">8</item>
-        <item name="btn9">9</item>
-        <item name="btnSqr">\u221A</item>
-        <item name="btnClear">C</item>
-        <item name="btnDivide">\u00F7</item>
-        <item name="btnPercent">%</item>
-        <item name="btnMultiply">\u00D7</item>
-        <item name="btnSubtract">-</item>
+        <item name="btn4">4</item>
+        <item name="btn1">1</item>
         <item name="btnSign">\u00B1</item>
+        <item name="btn8">8</item>
+        <item name="btn5">5</item>
+        <item name="btn2">2</item>
+        <item name="btn0">0</item>
+        <item name="btn9">9</item>
+        <item name="btn6">6</item>
+        <item name="btn3">3</item>
         <item name="btnDecimal">.</item>
+        <item name="btnSquare">\u221A</item>
+        <item name="btnDivide">\u00F7</item>
+        <item name="btnMultiply">\u00D7</item>
         <item name="btnAdd">+</item>
+        <item name="btnClear">C</item>
+        <item name="btnPercent">%</item>
+        <item name="btnSubtract">-</item>
         <item name="btnEquals">=</item>
     </string-array>
 </resources>
