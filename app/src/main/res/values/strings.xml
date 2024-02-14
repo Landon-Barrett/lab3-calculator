@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Calculator</string>
-    <string name="place_holder_num">0</string>
+    <string name="placeHolderNum">0</string>
+    <string name="placeHolderNumTag">placeHolderNum</string>
 
     <string-array name="buttonsColumn1">
         <item name="btn7">7</item>
@@ -35,5 +36,41 @@
         <item name="btnPercent">%</item>
         <item name="btnSubtract">-</item>
         <item name="btnEquals">=</item>
+    </string-array>
+
+
+    <string-array name="buttonsColumn1Tags">
+        <item name="btn7Tag">btn7</item>
+        <item name="btn4Tag">btn4</item>
+        <item name="btn1Tag">btn1</item>
+        <item name="btnSignTag">btnSign</item>
+    </string-array>
+
+    <string-array name="buttonsColumn2Tags">
+        <item name="btn8Tag">btn8</item>
+        <item name="btn5Tag">btn5</item>
+        <item name="btn2Tag">btn2</item>
+        <item name="btn0Tag">btn0</item>
+    </string-array>
+
+    <string-array name="buttonsColumn3Tags">
+        <item name="btnTag">btn9</item>
+        <item name="btn6Tag">btn6</item>
+        <item name="btn3Tag">btn3</item>
+        <item name="btnDecimalTag">btnDecimal</item>
+    </string-array>
+
+    <string-array name="buttonsColumn4Tags">
+        <item name="btnSquareTag">btnSquare</item>
+        <item name="btnDivideTag">btnDivide</item>
+        <item name="btnMultiplyTag">btnMultiply</item>
+        <item name="btnAddTag">btnAdd</item>
+    </string-array>
+
+    <string-array name="buttonsColumn5Tags">
+        <item name="btnClearTag">btnClear</item>
+        <item name="btnPercentTag">btnPercent</item>
+        <item name="btnSubtractTag">btnSubtract</item>
+        <item name="btnEqualsTag">btnEquals</item>
     </string-array>
 </resources>
