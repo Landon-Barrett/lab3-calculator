@@ -11,7 +11,7 @@ public class DefaultController extends AbstractController
      * be reflected in the Model.
      */
 
-    public static final String ELEMENT_TEXT1_PROPERTY = "Text1";
+    public static final String ELEMENT_OUTPUT_PROPERTY = "Output";
     public static final String ELEMENT_TEXT2_PROPERTY = "Text2";
 
     /*
@@ -21,8 +21,8 @@ public class DefaultController extends AbstractController
      * and updated properly.
      */
 
-    public void changeElementText1(String newText) {
-        setModelProperty(ELEMENT_TEXT1_PROPERTY, newText);
+    public void changeElementOutput(String newText) {
+        setModelProperty(ELEMENT_OUTPUT_PROPERTY, newText);
     }
 
     /*

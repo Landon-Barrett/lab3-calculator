@@ -24,7 +24,7 @@ public class DefaultModel extends AbstractModel {
 
     public void initDefault() {
 
-        setText1("Sample Text 1");
+        setOutput("Sample Text 1");
         setText2("Sample Text 2");
 
     }
@@ -49,14 +49,14 @@ public class DefaultModel extends AbstractModel {
      * they can update themselves accordingly.
      */
 
-    public void setText1(String newText) {
+    public void setOutput(String newText) {
 
         String oldText = this.text1;
         this.text1 = newText;
 
         Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
 
-        firePropertyChange(DefaultController.ELEMENT_TEXT1_PROPERTY, oldText, newText);
+        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, newText);
 
     }
 

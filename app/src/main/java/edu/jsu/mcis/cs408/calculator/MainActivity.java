@@ -5,7 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.constraintlayout.widget.Guideline;
 
-import android.graphics.Color;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,16 +13,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toolbar;
+import android.widget.Toast;
+
+import java.beans.PropertyChangeEvent;
 
 import edu.jsu.mcis.cs408.calculator.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AbstractView {
     private ActivityMainBinding binding;
     private static final int KEYS_HEIGHT = 4;
     private static final int KEYS_WIDTH = 5;
+    //private TextView output;
     private String[][] btnText;
     private String[][] btnTags;
+    private StringBuilder output = new StringBuilder();
+    private DefaultController controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -30,11 +35,184 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+        /* Create Controller and Model */
+
+        controller = new DefaultController();
+        DefaultModel model = new DefaultModel();
+
+        /* Register Activity View and Model with Controller */
+
+        controller.addView(this);
+        controller.addModel(model);
+
+        /* Initialize Model to Default Values */
+
+        model.initDefault();
+
+        /* Associate Click Handler with Input Buttons */
+
+        //DefaultClickHandler click = new DefaultClickHandler();
+        btnText = getButtonText();
+        btnTags = getButtonTags();
+
         initLayout();
     }
+    @Override
+    public void modelPropertyChange(final PropertyChangeEvent evt) {
+
+        /*
+         * This method is called by the "propertyChange()" method of AbstractController
+         * when a change is made to an element of a Model.  It identifies the element that
+         * was changed and updates the View accordingly.
+         */
+
+        String propertyName = evt.getPropertyName();
+        String propertyValue = evt.getNewValue().toString();
+        ConstraintLayout layout = binding.layout;
+        TextView output = new TextView(this);
+        //Log.i(TAG, "New " + propertyName + " Value from Model: " + propertyValue);
+        for (int i = 0; i < layout.getChildCount(); ++i) {
+            View child = layout.getChildAt(i);
+            if(child instanceof TextView && !(child instanceof Button)) {
+                output = (TextView) child;
+            }
+        }
+        if ( propertyName.equals(DefaultController.ELEMENT_OUTPUT_PROPERTY) ) {
+
+            String oldPropertyValue = (output.getText().toString());
+            if ( !oldPropertyValue.equals(propertyValue) ) {
+                output.setText(propertyValue);
+            }
+
+        }
+        /*
+        else if ( propertyName.equals(DefaultController.ELEMENT_TEXT2_PROPERTY) ) {
+
+            String oldPropertyValue = binding.outputText2.getText().toString();
+
+            if ( !oldPropertyValue.equals(propertyValue) ) {
+                binding.outputText2.setText(propertyValue);
+            }
+
+        }
+        */
+    }
+
+    class CalculatorClickHandler implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+
+            String tag = view.getTag().toString();
+            Toast toast = Toast.makeText(binding.getRoot().getContext(), tag, Toast.LENGTH_SHORT);
+            toast.show();
+
+            /*
+            Column 0 button logic
+             */
+
+            if (tag.equals("btn7")) {
+                String newText = (output.append(btnText[0][0])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn4")) {
+                String newText = (output.append(btnText[0][1])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn1")) {
+                String newText = (output.append(btnText[0][2])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnSign")) {
+                String newText = (output.append(btnText[0][3])).toString();
+                controller.changeElementOutput(newText);
+            }
+            /*
+            Column 1
+             */
+            else if (tag.equals("btn8")) {
+                String newText = (output.append(btnText[1][0])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn5")) {
+                String newText = (output.append(btnText[1][1])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn2")) {
+                String newText = (output.append(btnText[1][2])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn0")) {
+                String newText = (output.append(btnText[1][3])).toString();
+                controller.changeElementOutput(newText);
+            }
+            /*
+            Column 2
+             */
+            else if (tag.equals("btn9")) {
+                String newText = (output.append(btnText[2][0])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn6")) {
+                String newText = (output.append(btnText[2][1])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btn3")) {
+                String newText = (output.append(btnText[2][2])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnDecimal")) {
+                String newText = (output.append(btnText[2][3])).toString();
+                controller.changeElementOutput(newText);
+            }
+            /*
+            Column 3
+             */
+            else if (tag.equals("btnSquare")) {
+                String newText = (output.append(btnText[3][0])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnDivide")) {
+                String newText = (output.append(btnText[3][1])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnMultiply")) {
+                String newText = (output.append(btnText[3][2])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnAdd")) {
+                String newText = (output.append(btnText[3][3])).toString();
+                controller.changeElementOutput(newText);
+            }
+            /*
+            Column 4
+             */
+            else if (tag.equals("btnClear")) {
+                String newText = (output.append(btnText[4][0])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnPercent")) {
+                String newText = (output.append(btnText[4][1])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnSubtract")) {
+                String newText = (output.append(btnText[4][2])).toString();
+                controller.changeElementOutput(newText);
+            }
+            else if (tag.equals("btnEquals")) {
+                String newText = (output.append(btnText[4][3])).toString();
+                controller.changeElementOutput(newText);
+            }
+
+        }
+
+    }
+
 
     private void initLayout() {
 
+        CalculatorClickHandler click = new CalculatorClickHandler();
         ConstraintLayout layout = binding.layout;
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
@@ -58,9 +236,6 @@ public class MainActivity extends AppCompatActivity {
         layout.addView(output);
         ViewGroup.LayoutParams params = output.getLayoutParams();
 
-        btnText = getButtonText();
-        btnTags = getButtonTags();
-
         for(int i = 0; i < KEYS_WIDTH; i++) {
 
             for (int j = 0; j < KEYS_HEIGHT; j++) {
@@ -73,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
                 btn.setTag(btnTags[i][j]);
                 btn.setTextSize(24);
                 layout.addView(btn);
+                btn.setOnClickListener(click);
 
                 horizontals[j][i] = id;
                 verticals[i][j] = id;
@@ -126,4 +302,20 @@ public class MainActivity extends AppCompatActivity {
         return btnTags;
     }
 
+    /*
+    public String findButtonText(String target) {
+
+        String[][] btnText = getButtonText();
+
+        for(int i = 0; i < KEYS_WIDTH; i++) {
+            for(int j = 0; j < KEYS_HEIGHT; j++) {
+                String value = btnText[i][j];
+                value = value[3]
+                if(target.equals(btnText[i][j]))
+            }
+
+        }
+
+    }
+    */
 }
