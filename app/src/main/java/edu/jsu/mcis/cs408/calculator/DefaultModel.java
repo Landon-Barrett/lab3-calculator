@@ -1,6 +1,8 @@
 package edu.jsu.mcis.cs408.calculator;
 
+
 import android.util.Log;
+
 
 public class DefaultModel extends AbstractModel {
 
@@ -13,7 +15,11 @@ public class DefaultModel extends AbstractModel {
      */
 
     private String text1;
+    private StringBuilder output = new StringBuilder();
+
     private String text2;
+    //private String clear = context.getResources().getString(R.string.placeHolderNum);
+    private CalculatorState calState;
 
     /*
      * Initialize the model elements to known default values.  We use the setter
@@ -24,8 +30,9 @@ public class DefaultModel extends AbstractModel {
 
     public void initDefault() {
 
-        setOutput("Sample Text 1");
+        //setOutput("0");
         setText2("Sample Text 2");
+        //setCalState(calState.CLEAR);
 
     }
 
@@ -51,13 +58,29 @@ public class DefaultModel extends AbstractModel {
 
     public void setOutput(String newText) {
 
-        String oldText = this.text1;
-        this.text1 = newText;
+        String oldText = this.output.toString();
+        this.output = output.append(newText);
 
         Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
 
-        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, newText);
+        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
 
+    }
+
+    public void setCalState(CalculatorState newState) {
+
+        CalculatorState oldState = this.calState;
+        this.calState = newState;
+        firePropertyChange(DefaultController.ELEMENT_CALSTATE_PROPERTY, oldState, newState);
+        runCalState(calState);
+
+    }
+    public void runCalState(CalculatorState state) {
+
+        if(state.equals(CalculatorState.CLEAR)) {
+            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), "0");
+            output = new StringBuilder();
+        }
     }
 
     public void setText2(String newText) {

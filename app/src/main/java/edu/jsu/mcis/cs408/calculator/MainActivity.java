@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
     private String[][] btnText;
     private String[][] btnTags;
     private StringBuilder output = new StringBuilder();
+    private CalculatorState calState;
     private DefaultController controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,95 +114,96 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
              */
 
             if (tag.equals("btn7")) {
-                String newText = (output.append(btnText[0][0])).toString();
+                String newText = btnText[0][0];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn4")) {
-                String newText = (output.append(btnText[0][1])).toString();
+                String newText = btnText[0][1];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn1")) {
-                String newText = (output.append(btnText[0][2])).toString();
+                String newText = btnText[0][2];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnSign")) {
-                String newText = (output.append(btnText[0][3])).toString();
+                String newText = btnText[0][3];
                 controller.changeElementOutput(newText);
             }
             /*
             Column 1
              */
             else if (tag.equals("btn8")) {
-                String newText = (output.append(btnText[1][0])).toString();
+                String newText = btnText[1][0];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn5")) {
-                String newText = (output.append(btnText[1][1])).toString();
+                String newText = btnText[1][1];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn2")) {
-                String newText = (output.append(btnText[1][2])).toString();
+                String newText = btnText[1][2];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn0")) {
-                String newText = (output.append(btnText[1][3])).toString();
+                String newText = btnText[1][3];
                 controller.changeElementOutput(newText);
             }
             /*
             Column 2
              */
             else if (tag.equals("btn9")) {
-                String newText = (output.append(btnText[2][0])).toString();
+                String newText = btnText[2][0];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn6")) {
-                String newText = (output.append(btnText[2][1])).toString();
+                String newText = btnText[2][1];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btn3")) {
-                String newText = (output.append(btnText[2][2])).toString();
+                String newText = btnText[2][2];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnDecimal")) {
-                String newText = (output.append(btnText[2][3])).toString();
+                String newText = btnText[2][3];
                 controller.changeElementOutput(newText);
             }
             /*
             Column 3
              */
             else if (tag.equals("btnSquare")) {
-                String newText = (output.append(btnText[3][0])).toString();
+                String newText = btnText[3][0];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnDivide")) {
-                String newText = (output.append(btnText[3][1])).toString();
+                String newText = btnText[3][1];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnMultiply")) {
-                String newText = (output.append(btnText[3][2])).toString();
+                String newText = btnText[3][2];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnAdd")) {
-                String newText = (output.append(btnText[3][3])).toString();
+                String newText = btnText[3][3];
                 controller.changeElementOutput(newText);
             }
             /*
             Column 4
              */
             else if (tag.equals("btnClear")) {
-                String newText = (output.append(btnText[4][0])).toString();
-                controller.changeElementOutput(newText);
+                //String newText = (output.append(btnText[4][0])).toString();
+                calState = CalculatorState.CLEAR;
+                controller.changeElementCalState(calState);
             }
             else if (tag.equals("btnPercent")) {
-                String newText = (output.append(btnText[4][1])).toString();
+                String newText = btnText[4][1];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnSubtract")) {
-                String newText = (output.append(btnText[4][2])).toString();
+                String newText = btnText[4][2];
                 controller.changeElementOutput(newText);
             }
             else if (tag.equals("btnEquals")) {
-                String newText = (output.append(btnText[4][3])).toString();
+                String newText = btnText[4][3];
                 controller.changeElementOutput(newText);
             }
 
