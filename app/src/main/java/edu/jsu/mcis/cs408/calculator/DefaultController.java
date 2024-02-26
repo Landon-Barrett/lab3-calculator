@@ -14,6 +14,7 @@ public class DefaultController extends AbstractController
     public static final String ELEMENT_OUTPUT_PROPERTY = "Output";
     public static final String ELEMENT_TEXT2_PROPERTY = "Text2";
     public static final String ELEMENT_CALSTATE_PROPERTY = "CalState";
+    public static final String ELEMENT_OPERATOR_PROPERTY = "Operator";
 
     /*
      * This is the change method which corresponds to ELEMENT_TEXT1_PROPERTY.
@@ -28,6 +29,10 @@ public class DefaultController extends AbstractController
 
     public void changeElementCalState(CalculatorState newState) {
         setModelProperty(ELEMENT_CALSTATE_PROPERTY, newState);
+    }
+
+    public void changeElementOperator(Operator op) {
+        setModelProperty(ELEMENT_OPERATOR_PROPERTY, op);
     }
 
     /*

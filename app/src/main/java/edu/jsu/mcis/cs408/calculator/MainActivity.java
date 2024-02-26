@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             if (tag.equals("btn7")) {
                 String newText = btnText[0][0];
                 controller.changeElementOutput(newText);
+                //controller.changeElementCalState(CalculatorState.LHS);
             }
             else if (tag.equals("btn4")) {
                 String newText = btnText[0][1];
@@ -184,7 +185,10 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnAdd")) {
                 String newText = btnText[3][3];
+                controller.changeElementCalState(CalculatorState.OP_SELECTED);
                 controller.changeElementOutput(newText);
+
+                controller.changeElementOperator(Operator.ADD);
             }
             /*
             Column 4
@@ -204,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnEquals")) {
                 String newText = btnText[4][3];
-                controller.changeElementOutput(newText);
+                //controller.changeElementOutput(newText);
+                controller.changeElementCalState(CalculatorState.RESULT);
             }
 
         }

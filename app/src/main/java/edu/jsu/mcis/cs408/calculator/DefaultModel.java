@@ -3,6 +3,8 @@ package edu.jsu.mcis.cs408.calculator;
 
 import android.util.Log;
 
+import java.math.BigDecimal;
+
 
 public class DefaultModel extends AbstractModel {
 
@@ -16,10 +18,14 @@ public class DefaultModel extends AbstractModel {
 
     private String text1;
     private StringBuilder output = new StringBuilder();
+    private BigDecimal lhs;
+    private BigDecimal rhs;
+    private BigDecimal result;
+    private Operator operator = Operator.NONE;
 
     private String text2;
     //private String clear = context.getResources().getString(R.string.placeHolderNum);
-    private CalculatorState calState;
+    private CalculatorState calState = CalculatorState.CLEAR;
 
     /*
      * Initialize the model elements to known default values.  We use the setter
@@ -58,6 +64,10 @@ public class DefaultModel extends AbstractModel {
 
     public void setOutput(String newText) {
 
+        if(!(operator.equals(Operator.NONE))) {
+            output = new StringBuilder();
+        }
+
         String oldText = this.output.toString();
         this.output = output.append(newText);
 
@@ -65,6 +75,12 @@ public class DefaultModel extends AbstractModel {
 
         firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
 
+        if(output.length() == 1 && !(calState.equals(CalculatorState.RHS))) {
+            setCalState(CalculatorState.LHS);
+        }
+        else {
+            runCalState();
+        }
     }
 
     public void setCalState(CalculatorState newState) {
@@ -72,14 +88,44 @@ public class DefaultModel extends AbstractModel {
         CalculatorState oldState = this.calState;
         this.calState = newState;
         firePropertyChange(DefaultController.ELEMENT_CALSTATE_PROPERTY, oldState, newState);
-        runCalState(calState);
+        runCalState();
 
     }
-    public void runCalState(CalculatorState state) {
 
-        if(state.equals(CalculatorState.CLEAR)) {
+    public void setOperator(Operator op) {
+
+        operator = op;
+
+    }
+    public void runCalState() {
+
+        if(calState.equals(CalculatorState.CLEAR)) {
             firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), "0");
             output = new StringBuilder();
+        }
+        else if(calState.equals(CalculatorState.LHS)) {
+            lhs = new BigDecimal(output.toString());
+        }
+        else if(calState.equals(CalculatorState.OP_SELECTED)) {
+            calState = CalculatorState.RHS;
+
+
+        }
+        else if(calState.equals(CalculatorState.RHS)) {
+
+            rhs = new BigDecimal(output.toString());
+        }
+        else if(calState.equals(CalculatorState.RESULT)) {
+            if(operator.equals(Operator.ADD)) {
+                result = lhs.add(rhs);
+            }
+            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), result.toString());
+
+            lhs = result;
+            operator = Operator.NONE;
+            output = new StringBuilder();
+            output.append(result.toString());
+            calState = CalculatorState.LHS;
         }
     }
 
