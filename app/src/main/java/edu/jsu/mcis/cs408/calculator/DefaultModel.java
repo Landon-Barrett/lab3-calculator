@@ -18,6 +18,7 @@ public class DefaultModel extends AbstractModel {
 
     private String text1;
     private StringBuilder output = new StringBuilder();
+    private boolean rhsClear = false;
     private BigDecimal lhs;
     private BigDecimal rhs;
     private BigDecimal result;
@@ -64,7 +65,8 @@ public class DefaultModel extends AbstractModel {
 
     public void setOutput(String newText) {
 
-        if(!(operator.equals(Operator.NONE))) {
+        if(!(operator.equals(Operator.NONE)) && !rhsClear) {
+            rhsClear = true;
             output = new StringBuilder();
         }
 
@@ -108,17 +110,30 @@ public class DefaultModel extends AbstractModel {
         }
         else if(calState.equals(CalculatorState.OP_SELECTED)) {
             calState = CalculatorState.RHS;
-
-
         }
         else if(calState.equals(CalculatorState.RHS)) {
 
             rhs = new BigDecimal(output.toString());
         }
         else if(calState.equals(CalculatorState.RESULT)) {
+            rhsClear = false;
             if(operator.equals(Operator.ADD)) {
                 result = lhs.add(rhs);
             }
+            else if(operator.equals(Operator.SUBTRACT)) {
+                result = lhs.subtract(rhs);
+            }
+            else if(operator.equals(Operator.MULTIPLY)) {
+                result = lhs.multiply(rhs);
+            }
+            else if(operator.equals(Operator.DIVIDE)) {
+                result = lhs.divide(rhs);
+            }
+            else if(operator.equals(Operator.SIGN)) {
+                result = lhs.negate();
+                //calState = CalculatorState.RESULT;
+            }
+
             firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), result.toString());
 
             lhs = result;
