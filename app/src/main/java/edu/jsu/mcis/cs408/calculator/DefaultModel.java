@@ -4,6 +4,8 @@ package edu.jsu.mcis.cs408.calculator;
 import android.util.Log;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 
 public class DefaultModel extends AbstractModel {
@@ -19,6 +21,7 @@ public class DefaultModel extends AbstractModel {
     private String text1;
     private StringBuilder output = new StringBuilder();
     private boolean rhsClear = false;
+    private boolean hasDecimal = false;
     private BigDecimal lhs;
     private BigDecimal rhs;
     private BigDecimal result;
@@ -65,13 +68,22 @@ public class DefaultModel extends AbstractModel {
 
     public void setOutput(String newText) {
 
+        String oldText = this.output.toString();
         if(!(operator.equals(Operator.NONE)) && !rhsClear) {
             rhsClear = true;
             output = new StringBuilder();
         }
 
-        String oldText = this.output.toString();
-        this.output = output.append(newText);
+        if(newText.equals(".") && !hasDecimal) {
+            this.output.append(newText);
+            hasDecimal = true;
+        }
+        else if(newText.equals(".") && hasDecimal) {
+            //Do nothing.
+        }
+        else {
+            this.output = output.append(newText);
+        }
 
         Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
 
@@ -83,6 +95,24 @@ public class DefaultModel extends AbstractModel {
         else {
             runCalState();
         }
+    }
+
+    public void setOperatorSymbol(String newText) {
+
+        String oldText = this.output.toString();
+        if(!(operator.equals(Operator.NONE))) {
+            this.output.deleteCharAt(output.length() - 1);
+            this.output.append(newText);
+        }
+        else {
+            this.output = output.append(newText);
+        }
+        Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
+
+        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
+
+        runCalState();
+
     }
 
     public void setCalState(CalculatorState newState) {
@@ -109,7 +139,8 @@ public class DefaultModel extends AbstractModel {
             lhs = new BigDecimal(output.toString());
         }
         else if(calState.equals(CalculatorState.OP_SELECTED)) {
-            calState = CalculatorState.RHS;
+                calState = CalculatorState.RHS;
+                hasDecimal = false;
         }
         else if(calState.equals(CalculatorState.RHS)) {
 
@@ -117,6 +148,7 @@ public class DefaultModel extends AbstractModel {
         }
         else if(calState.equals(CalculatorState.RESULT)) {
             rhsClear = false;
+            //rhsActive = false;
             if(operator.equals(Operator.ADD)) {
                 result = lhs.add(rhs);
             }
@@ -133,10 +165,17 @@ public class DefaultModel extends AbstractModel {
                 result = lhs.negate();
                 //calState = CalculatorState.RESULT;
             }
+            else if(operator.equals(Operator.ROOT)) {
+                double num;
+                num = Math.sqrt(lhs.doubleValue());
+                result = BigDecimal.valueOf(num);
+                result = result.round(new MathContext(5));
+            }
 
             firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), result.toString());
 
             lhs = result;
+            hasDecimal = false;
             operator = Operator.NONE;
             output = new StringBuilder();
             output.append(result.toString());
