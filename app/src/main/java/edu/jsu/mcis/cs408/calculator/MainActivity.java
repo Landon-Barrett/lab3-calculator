@@ -208,7 +208,11 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnPercent")) {
                 String newText = btnText[4][1];
-                controller.changeElementOutput(newText);
+                controller.changeElementCalState(CalculatorState.OP_SELECTED);
+
+
+                controller.changeElementOperator(Operator.PERCENT);
+                controller.changeElementOperatorSymbol(newText);
             }
             else if (tag.equals("btnSubtract")) {
                 String newText = btnText[4][2];
@@ -320,20 +324,4 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
         return btnTags;
     }
 
-    /*
-    public String findButtonText(String target) {
-
-        String[][] btnText = getButtonText();
-
-        for(int i = 0; i < KEYS_WIDTH; i++) {
-            for(int j = 0; j < KEYS_HEIGHT; j++) {
-                String value = btnText[i][j];
-                value = value[3]
-                if(target.equals(btnText[i][j]))
-            }
-
-        }
-
-    }
-    */
 }
