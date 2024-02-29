@@ -203,8 +203,7 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
              */
             else if (tag.equals("btnClear")) {
                 //String newText = (output.append(btnText[4][0])).toString();
-                calState = CalculatorState.CLEAR;
-                controller.changeElementCalState(calState);
+                controller.changeElementCalState(CalculatorState.CLEAR);
             }
             else if (tag.equals("btnPercent")) {
                 String newText = btnText[4][1];

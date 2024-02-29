@@ -72,7 +72,6 @@ public class DefaultModel extends AbstractModel {
      */
 
     public void setOutput(String newText) {
-
         String oldText = this.output.toString();
         if (!(operator.equals(Operator.NONE)) && !rhsClear) {
             rhsClear = true;
@@ -92,7 +91,8 @@ public class DefaultModel extends AbstractModel {
 
         Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
 
-        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
+        if(!errorMode)
+            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
 
         if (output.length() == 1 && !(calState.equals(CalculatorState.RHS))) {
             setCalState(CalculatorState.LHS);
@@ -106,14 +106,20 @@ public class DefaultModel extends AbstractModel {
 
         String oldText = this.output.toString();
         if (!(operator.equals(Operator.NONE)) && !(operator.equals(Operator.PERCENT))) {
-            this.output.deleteCharAt(output.length() - 1);
-            this.output.append(newText);
-        } else {
+            if(calState.equals(CalculatorState.RHS)) {
+                //Do Nothing.
+            }
+            else {
+                this.output.deleteCharAt(output.length() - 1);
+                this.output.append(newText);
+            }
+        }
+        else {
             this.output = output.append(newText);
         }
         Log.i(TAG, "Text1 Change: From " + oldText + " to " + newText);
-
-        firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
+        if(!errorMode)
+            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, oldText, output.toString());
 
         runCalState();
 
@@ -131,14 +137,14 @@ public class DefaultModel extends AbstractModel {
     public void setOperator(Operator op) {
 
         operator = op;
-
     }
+
     public void runCalState() {
 
         if(calState.equals(CalculatorState.CLEAR)) {
+            errorMode = false;
+            clear();
             firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), "0");
-            output = new StringBuilder();
-            operator = Operator.NONE;
         }
         else if(calState.equals(CalculatorState.LHS)) {
             lhs = new BigDecimal(output.toString());
@@ -183,17 +189,15 @@ public class DefaultModel extends AbstractModel {
                 result = lhs.negate();
             }
             else if(operator.equals(Operator.ROOT)) {
-                try {
+
+                if(lhs.compareTo(new BigDecimal(0)) == -1) {
+                    setCalState(CalculatorState.ERROR);
+                }
+                else {
                     double num;
                     num = Math.sqrt(lhs.doubleValue());
                     result = BigDecimal.valueOf(num);
                     result = result.round(new MathContext(5));
-                }
-                catch(ArithmeticException e) {
-                    Log.e(TAG, "An Error has occured " + e.getMessage(), e);
-                    setCalState(CalculatorState.ERROR);
-
-
                 }
             }
             else if(operator.equals(Operator.PERCENT)) {
@@ -218,19 +222,8 @@ public class DefaultModel extends AbstractModel {
             }
 
             String resultString = result.toString();
-            /*
-            if(resultString.length() >= MAX_SCREEN_SIZE + 1) {
-                // Extract significant digits and exponent
-                String significantDigits = resultString.substring(0, 7); // Adjust as needed
-                int exponent = resultString.length() - 1;
-
-                // Combine significant digits and exponent in scientific notation
-                String scientificNotation = significantDigits + "E" + "+" + exponent;
-
-                resultString = scientificNotation;
-            }
-            */
-            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), resultString);
+            if(!errorMode)
+                firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), resultString);
 
             lhs = result;
             hasDecimal = false;
@@ -242,9 +235,19 @@ public class DefaultModel extends AbstractModel {
             calState = CalculatorState.LHS;
         }
         else if(calState.equals(CalculatorState.ERROR)) {
-            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), "ERROR");
             errorMode = true;
+            firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), "ERROR");
+            clear();
+
         }
+    }
+
+    public void clear() {
+        this.result = new BigDecimal(0);
+        this.lhs = new BigDecimal(0);
+        this.rhs = new BigDecimal(0);
+        this.operator = Operator.NONE;
+        output = new StringBuilder();
     }
 
     public void setText2(String newText) {
