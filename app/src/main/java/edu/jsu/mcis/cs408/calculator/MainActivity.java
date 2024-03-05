@@ -7,13 +7,11 @@ import androidx.constraintlayout.widget.Guideline;
 
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.beans.PropertyChangeEvent;
 
@@ -23,11 +21,8 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
     private ActivityMainBinding binding;
     private static final int KEYS_HEIGHT = 4;
     private static final int KEYS_WIDTH = 5;
-    //private TextView output;
     private String[][] btnText;
     private String[][] btnTags;
-    private StringBuilder output = new StringBuilder();
-    private CalculatorState calState;
     private DefaultController controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +32,12 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
         View view = binding.getRoot();
         setContentView(view);
 
-        /* Create Controller and Model */
-
         controller = new DefaultController();
         DefaultModel model = new DefaultModel();
-
-        /* Register Activity View and Model with Controller */
 
         controller.addView(this);
         controller.addModel(model);
 
-        /* Initialize Model to Default Values */
-
-        model.initDefault();
-
-        /* Associate Click Handler with Input Buttons */
-
-        //DefaultClickHandler click = new DefaultClickHandler();
         btnText = getButtonText();
         btnTags = getButtonTags();
 
@@ -62,17 +46,11 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
     @Override
     public void modelPropertyChange(final PropertyChangeEvent evt) {
 
-        /*
-         * This method is called by the "propertyChange()" method of AbstractController
-         * when a change is made to an element of a Model.  It identifies the element that
-         * was changed and updates the View accordingly.
-         */
-
         String propertyName = evt.getPropertyName();
         String propertyValue = evt.getNewValue().toString();
         ConstraintLayout layout = binding.layout;
         TextView output = new TextView(this);
-        //Log.i(TAG, "New " + propertyName + " Value from Model: " + propertyValue);
+
         for (int i = 0; i < layout.getChildCount(); ++i) {
             View child = layout.getChildAt(i);
             if(child instanceof TextView && !(child instanceof Button)) {
@@ -87,17 +65,7 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
 
         }
-        /*
-        else if ( propertyName.equals(DefaultController.ELEMENT_TEXT2_PROPERTY) ) {
 
-            String oldPropertyValue = binding.outputText2.getText().toString();
-
-            if ( !oldPropertyValue.equals(propertyValue) ) {
-                binding.outputText2.setText(propertyValue);
-            }
-
-        }
-        */
     }
 
     class CalculatorClickHandler implements View.OnClickListener {
@@ -106,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
         public void onClick(View view) {
 
             String tag = view.getTag().toString();
-            Toast toast = Toast.makeText(binding.getRoot().getContext(), tag, Toast.LENGTH_SHORT);
-            toast.show();
-
             /*
             Column 0 button logic
              */
@@ -116,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             if (tag.equals("btn7")) {
                 String newText = btnText[0][0];
                 controller.changeElementOutput(newText);
-                //controller.changeElementCalState(CalculatorState.LHS);
             }
             else if (tag.equals("btn4")) {
                 String newText = btnText[0][1];
@@ -129,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             else if (tag.equals("btnSign")) {
                 String newText = btnText[0][3];
                 controller.changeElementSign(newText);
-                //controller.changeElementOperator(Operator.SIGN);
-                //controller.changeElementUnaryOp(newText);
-                //controller.changeElementCalState(CalculatorState.OP_SELECTED);
             }
             /*
             Column 1
@@ -177,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             else if (tag.equals("btnSquare")) {
                 String newText = btnText[3][0];
                 controller.changeElementRoot(newText);
-                //controller.changeElementOperator(Operator.ROOT);
-                //controller.changeElementCalState(CalculatorState.RESULT);
             }
             else if (tag.equals("btnDivide")) {
                 String newText = btnText[3][1];
@@ -205,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             Column 4
              */
             else if (tag.equals("btnClear")) {
-                //String newText = (output.append(btnText[4][0])).toString();
                 controller.changeElementCalState(CalculatorState.CLEAR);
             }
             else if (tag.equals("btnPercent")) {

@@ -1,5 +1,4 @@
 package edu.jsu.mcis.cs408.calculator;
-import android.content.Context;
 public enum Operator {
     ADD("+"),
     SUBTRACT("-"),
