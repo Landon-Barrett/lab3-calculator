@@ -191,7 +191,7 @@ public class DefaultModel extends AbstractModel {
             }
             else {
                 double num;
-                num = Math.sqrt(lhs.doubleValue());
+                num = Math.sqrt(rhs.doubleValue());
                 rhs = BigDecimal.valueOf(num);
                 rhs = rhs.round(new MathContext(5));
             }
