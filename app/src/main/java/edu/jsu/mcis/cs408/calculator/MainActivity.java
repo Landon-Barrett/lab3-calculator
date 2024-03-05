@@ -128,8 +128,10 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnSign")) {
                 String newText = btnText[0][3];
-                controller.changeElementOperator(Operator.SIGN);
-                controller.changeElementCalState(CalculatorState.RESULT);
+                controller.changeElementSign(newText);
+                //controller.changeElementOperator(Operator.SIGN);
+                //controller.changeElementUnaryOp(newText);
+                //controller.changeElementCalState(CalculatorState.OP_SELECTED);
             }
             /*
             Column 1
@@ -174,8 +176,9 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
              */
             else if (tag.equals("btnSquare")) {
                 String newText = btnText[3][0];
-                controller.changeElementOperator(Operator.ROOT);
-                controller.changeElementCalState(CalculatorState.RESULT);
+                controller.changeElementRoot(newText);
+                //controller.changeElementOperator(Operator.ROOT);
+                //controller.changeElementCalState(CalculatorState.RESULT);
             }
             else if (tag.equals("btnDivide")) {
                 String newText = btnText[3][1];
@@ -207,10 +210,11 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnPercent")) {
                 String newText = btnText[4][1];
+                controller.changeElementUnaryOp(newText);
                 controller.changeElementCalState(CalculatorState.OP_SELECTED);
-
-
                 controller.changeElementOperator(Operator.PERCENT);
+
+
                 controller.changeElementOperatorSymbol(newText);
             }
             else if (tag.equals("btnSubtract")) {
@@ -222,8 +226,7 @@ public class MainActivity extends AppCompatActivity implements AbstractView {
             }
             else if (tag.equals("btnEquals")) {
                 String newText = btnText[4][3];
-                //controller.changeElementOutput(newText);
-                controller.changeElementCalState(CalculatorState.RESULT);
+                controller.changeElementEquals(newText);
             }
 
         }

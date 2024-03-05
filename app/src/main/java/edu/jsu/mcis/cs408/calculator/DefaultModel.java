@@ -27,10 +27,17 @@ public class DefaultModel extends AbstractModel {
     private boolean percentAdd;
     private boolean errorMode = false;
     private boolean percentSubtract = false;
+    private boolean percentDivide = false;
+    private boolean secondOp = false;
+    private boolean unaryOp = false;
+    //private boolean rhsRan = false;
+    private boolean equals = true;
+    private boolean numEntered = false;
     private BigDecimal lhs = new BigDecimal(0);
     private BigDecimal rhs = new BigDecimal(0);
     private BigDecimal result;
     private Operator operator = Operator.NONE;
+    private Operator oldOp = Operator.NONE;
 
     private String text2;
     //private String clear = context.getResources().getString(R.string.placeHolderNum);
@@ -76,6 +83,7 @@ public class DefaultModel extends AbstractModel {
         if (!(operator.equals(Operator.NONE)) && !rhsClear) {
             rhsClear = true;
             output = new StringBuilder();
+            numEntered = true;
         }
 
         if (newText.equals(".") && !hasDecimal) {
@@ -106,13 +114,17 @@ public class DefaultModel extends AbstractModel {
 
         String oldText = this.output.toString();
         if (!(operator.equals(Operator.NONE)) && !(operator.equals(Operator.PERCENT))) {
-            if(calState.equals(CalculatorState.RHS)) {
-                //Do Nothing.
-            }
-            else {
+            if(!numEntered) {
                 this.output.deleteCharAt(output.length() - 1);
                 this.output.append(newText);
             }
+        }
+        else if(!numEntered && operator.equals(Operator.PERCENT)) {
+            if(!errorMode)
+                calState = CalculatorState.CLEAR;
+        }
+        else if(output.length() == 0) {
+            output.append("0").append(newText);
         }
         else {
             this.output = output.append(newText);
@@ -127,6 +139,7 @@ public class DefaultModel extends AbstractModel {
 
     public void setCalState(CalculatorState newState) {
 
+
         CalculatorState oldState = this.calState;
         this.calState = newState;
         firePropertyChange(DefaultController.ELEMENT_CALSTATE_PROPERTY, oldState, newState);
@@ -135,11 +148,85 @@ public class DefaultModel extends AbstractModel {
     }
 
     public void setOperator(Operator op) {
-
         operator = op;
+    }
+    public void setUnaryOp(String newText) {
+        this.unaryOp = true;
+    }
+
+    public void setEquals(String newText) {
+        secondOp = false;
+
+        setCalState(CalculatorState.RESULT);
+    }
+
+    public void setSign(String newText) {
+
+        String oldText = output.toString();
+        output = new StringBuilder();
+
+        if(calState.equals(CalculatorState.RHS) && numEntered) {
+            rhs = rhs.negate();
+            setOutput(rhs.toString());
+        }
+        else if(calState.equals(CalculatorState.RHS) && !numEntered) {
+            rhs = lhs.negate();
+            setOutput(rhs.toString());
+        }
+        else {
+            lhs = lhs.negate();
+            setOutput(lhs.toString());
+        }
+
+    }
+
+    public void setRoot(String newText) {
+
+        String oldText = output.toString();
+        output = new StringBuilder();
+
+        if(calState.equals(CalculatorState.RHS) && numEntered) {
+            if(rhs.compareTo(new BigDecimal(0)) == -1) {
+                setCalState(CalculatorState.ERROR);
+            }
+            else {
+                double num;
+                num = Math.sqrt(lhs.doubleValue());
+                rhs = BigDecimal.valueOf(num);
+                rhs = rhs.round(new MathContext(5));
+            }
+            setOutput(rhs.toString());
+        }
+        else if(calState.equals(CalculatorState.RHS) && !numEntered) {
+            if(lhs.compareTo(new BigDecimal(0)) == -1) {
+                setCalState(CalculatorState.ERROR);
+            }
+            else {
+                double num;
+                num = Math.sqrt(lhs.doubleValue());
+                rhs = BigDecimal.valueOf(num);
+                rhs = rhs.round(new MathContext(5));
+            }
+            setOutput(rhs.toString());
+        }
+        else {
+            if(lhs.compareTo(new BigDecimal(0)) == -1) {
+                setCalState(CalculatorState.ERROR);
+            }
+            else {
+                double num;
+                num = Math.sqrt(lhs.doubleValue());
+                lhs = BigDecimal.valueOf(num);
+                lhs = lhs.round(new MathContext(5));
+            }
+            setOutput(lhs.toString());
+        }
+
     }
 
     public void runCalState() {
+
+
 
         if(calState.equals(CalculatorState.CLEAR)) {
             errorMode = false;
@@ -150,6 +237,12 @@ public class DefaultModel extends AbstractModel {
             lhs = new BigDecimal(output.toString());
         }
         else if(calState.equals(CalculatorState.OP_SELECTED)) {
+                if(unaryOp) {
+                    secondOp = false;
+                }
+                else if(secondOp && numEntered) {
+                    setCalState(CalculatorState.RESULT);
+                }
                 calState = CalculatorState.RHS;
                 hasDecimal = false;
                 if(operator.equals(Operator.ADD)) {
@@ -158,12 +251,31 @@ public class DefaultModel extends AbstractModel {
                 else if(operator.equals(Operator.SUBTRACT)) {
                     percentSubtract = true;
                 }
+                else if(operator.equals(Operator.DIVIDE)) {
+                    percentDivide = true;
+                }
+                else if(operator.equals(Operator.SIGN)) {
+                    if(calState.equals(CalculatorState.RHS) && numEntered) {
+                        rhs = rhs.negate();
+                        operator = oldOp;
+                        setCalState(CalculatorState.RESULT);
+                    }
+                    else
+                        setCalState(CalculatorState.RESULT);
+                }
+                oldOp = operator;
+                secondOp = true;
+                unaryOp = false;
+
         }
         else if(calState.equals(CalculatorState.RHS)) {
-
             rhs = new BigDecimal(output.toString());
         }
         else if(calState.equals(CalculatorState.RESULT)) {
+            if((rhs.compareTo(new BigDecimal(0)) == 0) && (!numEntered)) {
+                if(!operator.equals(Operator.PERCENT))
+                    rhs = lhs;
+            }
             rhsClear = false;
             if(operator.equals(Operator.ADD)) {
                 result = lhs.add(rhs);
@@ -222,17 +334,23 @@ public class DefaultModel extends AbstractModel {
             }
 
             String resultString = result.toString();
+            if(resultString.length() >= MAX_SCREEN_SIZE) {
+                resultString = "99999999999";
+            }
             if(!errorMode)
                 firePropertyChange(DefaultController.ELEMENT_OUTPUT_PROPERTY, output.toString(), resultString);
 
             lhs = result;
             hasDecimal = false;
             percentAdd = false;
+            numEntered = false;
             percentSubtract = false;
             operator = Operator.NONE;
             output = new StringBuilder();
             output.append(result.toString());
             calState = CalculatorState.LHS;
+
+
         }
         else if(calState.equals(CalculatorState.ERROR)) {
             errorMode = true;
@@ -245,6 +363,7 @@ public class DefaultModel extends AbstractModel {
     public void clear() {
         this.result = new BigDecimal(0);
         this.lhs = new BigDecimal(0);
+        this.secondOp = false;
         this.rhs = new BigDecimal(0);
         this.operator = Operator.NONE;
         output = new StringBuilder();
